@@ -1,17 +1,26 @@
-  @import 'react-big-calendar/lib/sass/styles';
-  @import 'styles/modal';
+@import "react-big-calendar/lib/sass/styles";
+@import "styles/modal";
 
-  html, body {
-    height: 100vh;
-    width: 100vw;
-  }
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+}
 
-  .calendar-screen {
-    display: flex;
-    flex-flow: column;
-    height: 100vh;
-  }
+.calendar-screen {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
 
-  .rbc-calendar {
-    height: 100%;
-  }
+.rbc-calendar {
+  height: 100%;
+}
+
+.react-datetime-picker input:focus {
+  outline: none;
+}
+
+.react-datetime-picker__wrapper {
+  border: 0 solid gray !important;
+}

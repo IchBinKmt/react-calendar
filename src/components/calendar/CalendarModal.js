@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
-import { startOfHour } from 'date-fns';
+import { add, compareAsc, startOfHour, toDate } from 'date-fns';
+import Swal from 'sweetalert2'
 
 
 const customStyles = {
@@ -16,16 +17,65 @@ const customStyles = {
     },
 };
 Modal.setAppElement('#root');
-const startDate = startOfHour(new Date());
-
+const now = startOfHour(new Date());
+const inOneHour = add(startOfHour(new Date()), {hours: 1});
 
 export const CalendarModal = () => {
-    const [value, onChange] = useState(new Date());
+    const [startDate, setStartDate] = useState(toDate(now));
+    const [endDate, setEndDate] = useState(toDate(inOneHour));
+    const [titleValid, setTitleValid] = useState(true);
+
+    
+    const [formValues, setFormValues] = useState({
+        title: 'Event',
+        notes: '',
+        start: toDate(now),
+        end: toDate(inOneHour)
+    });
+
+    const {notes, title, start, end} = formValues;
+
+    const handleInputChanges = ({target}) => {
+       setFormValues({
+           ...formValues,
+           [target.name]: target.value
+       })
+    };
+    
+    const handleSubmitForm = (e) => {
+       e.preventDefault();
+       if (compareAsc(end, start) !== 1) {
+           Swal.fire('Error', 'La fecha fin debe ser mayor a la fecha de inicio', 'error');
+           return;           
+       }
+       if(title.trim().length < 2) {
+            return setTitleValid(false);
+       }
+
+       // TODO: guardar en base de datos
+       setTitleValid(true);
+       closeModal();
+    };
+    
+
     const closeModal = () => {
+        // TODO: cerrar el modal
     }
 
     const handleStartDateChange = (e) => {
-        console.log(e);
+        setStartDate(e);
+        setFormValues({
+            ...formValues,
+            start: e
+        })
+    }
+
+    const handleEndDateChange = (e) => {
+        setEndDate(e);
+        setFormValues({
+            ...formValues,
+            end: e
+        })
     }
     return (
         <Modal
@@ -39,19 +89,28 @@ export const CalendarModal = () => {
         >
             <h1> Nuevo evento </h1>
             <hr />
-            <form className="container">
+            <form 
+                className="container"
+                onSubmit={handleSubmitForm}
+            >
 
                 <div className="form-group">
                     <label>Fecha y hora inicio</label>
                     <DateTimePicker
                         onChange={handleStartDateChange}
-                        value={value}
+                        value={toDate(startDate)}
+                        className="form-control"
                     />
                 </div>
 
                 <div className="form-group">
                     <label>Fecha y hora fin</label>
-                    <input className="form-control" placeholder="Fecha inicio" />
+                    <DateTimePicker
+                        onChange={handleEndDateChange}
+                        value={toDate(endDate)}
+                        minDate={startDate}
+                        className="form-control"
+                    />
                 </div>
 
                 <hr />
@@ -59,10 +118,12 @@ export const CalendarModal = () => {
                     <label>Titulo y notas</label>
                     <input 
                         type="text" 
-                        className="form-control"
+                        className={`form-control ${!titleValid && 'is-invalid'}`}
                         placeholder="Título del evento"
                         name="title"
                         autoComplete="off"
+                        value={title}
+                        onChange={handleInputChanges}
                     />
                     <small id="emailHelp" className="form-text text-muted">Una descripción corta</small>
                 </div>
@@ -74,6 +135,8 @@ export const CalendarModal = () => {
                         placeholder="Notas"
                         rows="5"
                         name="notes"
+                        value={notes}
+                        onChange={handleInputChanges}
                     ></textarea>
                     <small id="emailHelp" className="form-text text-muted">Información adicional</small>
                 </div>
