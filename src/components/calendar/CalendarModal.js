@@ -6,7 +6,11 @@ import { add, compareAsc, startOfHour, toDate } from "date-fns";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { uiCloseModal } from "../../actions/ui";
-import { eventAddNew, eventClearActiveEvent } from "../../actions/events";
+import {
+    eventAddNew,
+    eventClearActiveEvent,
+    eventUpdated,
+} from "../../actions/events";
 
 const customStyles = {
     content: {
@@ -72,16 +76,21 @@ export const CalendarModal = () => {
         }
 
         // TODO: guardar en base de datos
-        dispatch(
-            eventAddNew({
-                ...formValues,
-                id: new Date().getTime(),
-                user: {
-                    _id: "123",
-                    name: "Angel",
-                },
-            })
-        );
+        if (activeEvent) {
+            dispatch(eventUpdated(formValues));
+        } else {
+            dispatch(
+                eventAddNew({
+                    ...formValues,
+                    id: new Date().getTime(),
+                    user: {
+                        _id: "123",
+                        name: "Angel",
+                    },
+                })
+            );
+        }
+
         setTitleValid(true);
         closeModal();
     };
@@ -113,70 +122,70 @@ export const CalendarModal = () => {
             onRequestClose={closeModal}
             style={customStyles}
             closeTimeoutMS={200}
-            className='modal'
-            overlayClassName='modal-fondo'
+            className="modal"
+            overlayClassName="modal-fondo"
         >
             <h1> Nuevo evento </h1>
             <hr />
-            <form className='container' onSubmit={handleSubmitForm}>
-                <div className='form-group'>
+            <form className="container" onSubmit={handleSubmitForm}>
+                <div className="form-group">
                     <label>Fecha y hora inicio</label>
                     <DateTimePicker
                         onChange={handleStartDateChange}
                         value={toDate(startDate)}
-                        className='form-control'
+                        className="form-control"
                     />
                 </div>
 
-                <div className='form-group'>
+                <div className="form-group">
                     <label>Fecha y hora fin</label>
                     <DateTimePicker
                         onChange={handleEndDateChange}
                         value={toDate(endDate)}
                         minDate={startDate}
-                        className='form-control'
+                        className="form-control"
                     />
                 </div>
 
                 <hr />
-                <div className='form-group'>
+                <div className="form-group">
                     <label>Titulo y notas</label>
                     <input
-                        type='text'
+                        type="text"
                         className={`form-control ${
                             !titleValid && "is-invalid"
                         }`}
-                        placeholder='Título del evento'
-                        name='title'
-                        autoComplete='off'
+                        placeholder="Título del evento"
+                        name="title"
+                        autoComplete="off"
                         value={title}
                         onChange={handleInputChanges}
                     />
-                    <small id='emailHelp' className='form-text text-muted'>
+                    <small id="emailHelp" className="form-text text-muted">
                         Una descripción corta
                     </small>
                 </div>
 
-                <div className='form-group'>
+                <div className="form-group">
                     <textarea
-                        type='text'
-                        className='form-control'
-                        placeholder='Notas'
-                        rows='5'
-                        name='notes'
+                        type="text"
+                        className="form-control"
+                        placeholder="Notas"
+                        rows="5"
+                        name="notes"
                         value={notes}
                         onChange={handleInputChanges}
                     ></textarea>
-                    <small id='emailHelp' className='form-text text-muted'>
+                    <small id="emailHelp" className="form-text text-muted">
                         Información adicional
                     </small>
                 </div>
 
                 <button
-                    type='submit'
-                    className='btn btn-outline-primary btn-block'
+                    type="submit"
+                    className="btn btn-outline-primary btn-block"
                 >
-                    <i className='far fa-save'></i>
+                    <i className="far fa-save"></i>
                     <span> Guardar</span>
                 </button>
             </form>
