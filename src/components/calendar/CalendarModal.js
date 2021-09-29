@@ -1,35 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import Modal from "react-modal";
-import DateTimePicker from "react-datetime-picker";
-import { add, compareAsc, startOfHour, toDate } from "date-fns";
-import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { uiCloseModal } from "../../actions/ui";
-import {
-    eventAddNew,
-    eventClearActiveEvent,
-    eventUpdated,
-} from "../../actions/events";
+import Modal from 'react-modal';
+import DateTimePicker from 'react-datetime-picker';
+import { add, compareAsc, startOfHour, toDate } from 'date-fns';
+import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import { uiCloseModal } from '../../actions/ui';
+import { eventClearActiveEvent, eventStartAddNew, eventUpdated } from '../../actions/events';
 
 const customStyles = {
     content: {
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
     },
 };
 
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 const now = startOfHour(new Date());
 const inOneHour = add(startOfHour(new Date()), { hours: 1 });
 
 const initEvent = {
-    title: "Event",
-    notes: "",
+    title: 'Event',
+    notes: '',
     start: toDate(now),
     end: toDate(inOneHour),
 };
@@ -64,11 +60,7 @@ export const CalendarModal = () => {
     const handleSubmitForm = (e) => {
         e.preventDefault();
         if (compareAsc(end, start) !== 1) {
-            Swal.fire(
-                "Error",
-                "La fecha fin debe ser mayor a la fecha de inicio",
-                "error"
-            );
+            Swal.fire('Error', 'La fecha fin debe ser mayor a la fecha de inicio', 'error');
             return;
         }
         if (title.trim().length < 2) {
@@ -79,16 +71,7 @@ export const CalendarModal = () => {
         if (activeEvent) {
             dispatch(eventUpdated(formValues));
         } else {
-            dispatch(
-                eventAddNew({
-                    ...formValues,
-                    id: new Date().getTime(),
-                    user: {
-                        _id: "123",
-                        name: "Angel",
-                    },
-                })
-            );
+            dispatch(eventStartAddNew(formValues));
         }
 
         setTitleValid(true);
@@ -152,9 +135,7 @@ export const CalendarModal = () => {
                     <label>Titulo y notas</label>
                     <input
                         type="text"
-                        className={`form-control ${
-                            !titleValid && "is-invalid"
-                        }`}
+                        className={`form-control ${!titleValid && 'is-invalid'}`}
                         placeholder="Título del evento"
                         name="title"
                         autoComplete="off"
@@ -181,10 +162,7 @@ export const CalendarModal = () => {
                     </small>
                 </div>
 
-                <button
-                    type="submit"
-                    className="btn btn-outline-primary btn-block"
-                >
+                <button type="submit" className="btn btn-outline-primary btn-block">
                     <i className="far fa-save"></i>
                     <span> Guardar</span>
                 </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 
 import format from 'date-fns/format';
@@ -13,7 +13,7 @@ import { CalendarModal } from './CalendarModal';
 import { CalendarEvent } from './CalendarEvent';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
-import { eventSetActive } from '../../actions/events';
+import { eventSetActive, eventStartLoaded, eventStartLoading } from '../../actions/events';
 import { AddNewFab } from '../ui/AddNewFab';
 
 const locales = {
@@ -29,9 +29,14 @@ const localizer = dateFnsLocalizer({
 });
 
 export const CalendarScreen = () => {
+    const { uid } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const { events } = useSelector((state) => state.calendar);
     const [lastview, setLastview] = useState(localStorage.getItem('lastView') || 'month');
+
+    useEffect(() => {
+        dispatch(eventStartLoading());
+    }, [dispatch]);
 
     const onDoubleClick = (e) => {
         dispatch(uiOpenModal());
@@ -48,7 +53,7 @@ export const CalendarScreen = () => {
 
     const eventStyleGetter = (event, start, end, isSelected) => {
         const style = {
-            backgroundColor: '#367CF7',
+            backgroundColor: uid === event.user._id ? '#367CF7' : '#465660',
             borderRadius: '0px',
             opacity: 0.8,
             display: 'block',

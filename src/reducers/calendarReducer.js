@@ -1,21 +1,20 @@
-import { add } from "date-fns";
-import { types } from "../types/types";
+import { types } from '../types/types';
+
+// {
+//     id: new Date().getTime(),
+//     title: "Mi cumple",
+//     start: new Date(),
+//     end: add(new Date(), { hours: 2 }),
+//     bgcolor: "#fafafa",
+//     notes: "Comprar el pastel",
+//     user: {
+//         _id: "123",
+//         name: "Angel",
+//     },
+// },
 
 const initialState = {
-    events: [
-        {
-            id: new Date().getTime(),
-            title: "Mi cumple",
-            start: new Date(),
-            end: add(new Date(), { hours: 2 }),
-            bgcolor: "#fafafa",
-            notes: "Comprar el pastel",
-            user: {
-                _id: "123",
-                name: "Angel",
-            },
-        },
-    ],
+    events: [],
     activeEvent: null,
 };
 
@@ -42,9 +41,13 @@ export const calendarReducer = (state = initialState, action) => {
         case types.eventUpdate:
             return {
                 ...state,
-                events: state.events.map((e) =>
-                    e.id === action.payload.id ? action.payload : e
-                ),
+                events: state.events.map((e) => (e.id === action.payload.id ? action.payload : e)),
+            };
+
+        case types.eventLoaded:
+            return {
+                ...state,
+                events: [...action.payload],
             };
         default:
             return state;
