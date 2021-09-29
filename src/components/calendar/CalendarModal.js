@@ -6,7 +6,7 @@ import { add, compareAsc, startOfHour, toDate } from 'date-fns';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { eventClearActiveEvent, eventStartAddNew, eventUpdated } from '../../actions/events';
+import { eventClearActiveEvent, eventStartAddNew, startEventUpdated } from '../../actions/events';
 
 const customStyles = {
     content: {
@@ -47,6 +47,10 @@ export const CalendarModal = () => {
     useEffect(() => {
         if (activeEvent) {
             setFormValues(activeEvent);
+            setStartDate(activeEvent.start);
+            setEndDate(activeEvent.end);
+        } else {
+            setFormValues(initEvent);
         }
     }, [activeEvent, setFormValues]);
 
@@ -67,9 +71,8 @@ export const CalendarModal = () => {
             return setTitleValid(false);
         }
 
-        // TODO: guardar en base de datos
         if (activeEvent) {
-            dispatch(eventUpdated(formValues));
+            dispatch(startEventUpdated(formValues));
         } else {
             dispatch(eventStartAddNew(formValues));
         }
@@ -108,7 +111,7 @@ export const CalendarModal = () => {
             className="modal"
             overlayClassName="modal-fondo"
         >
-            <h1> Nuevo evento </h1>
+            <h1> {activeEvent ? 'Editar evento' : 'Nuevo evento'} </h1>
             <hr />
             <form className="container" onSubmit={handleSubmitForm}>
                 <div className="form-group">

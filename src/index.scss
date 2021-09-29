@@ -1,5 +1,5 @@
-@import "react-big-calendar/lib/sass/styles";
-@import "styles/modal";
+@import 'react-big-calendar/lib/sass/styles';
+@import 'styles/modal';
 
 html,
 body {
@@ -32,4 +32,11 @@ body {
     padding: 25px;
     position: fixed;
     right: 25px;
+}
+
+.fab-danger {
+    bottom: 25px;
+    padding: 10px;
+    position: fixed;
+    left: 25px;
 }
